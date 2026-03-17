@@ -1,81 +1,104 @@
 // src/components/AboutMe.jsx
 // Shows your profile — fetches live data from FastAPI backend
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import staticData from "../data/about_me.js";
 
 function AboutMe() {
-  const [data, setData] = useState(staticData);
+  const [data, setData]       = useState(staticData);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError]     = useState(false);
 
   useEffect(() => {
-    console.log("📡 Fetching About Me from FastAPI...");
-
-    axios
-      .get("http://localhost:8000/api/about")
-      .then((response) => {
-        console.log("✅ Got data:", response.data);
-        setData(response.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log("❌ Error:", err.message);
-        setError("Backend offline — showing static data");
-        setLoading(false);
-      });
+    axios.get("http://localhost:8000/api/about")
+      .then((res) => { setData(res.data); setLoading(false); })
+      .catch(() => { setError(true); setLoading(false); });
   }, []);
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.heading}>About Me</h2>
+    <section id="about" style={{ maxWidth: "900px", margin: "0 auto", padding: "80px 32px" }}>
 
-      {loading && <p style={styles.status}>⏳ Loading from FastAPI...</p>}
-      {error   && <p style={styles.error}>⚠️ {error}</p>}
+      <p style={{ fontFamily: "monospace", color: "#63b3ed", fontSize: "13px", marginBottom: "6px" }}>
+        // about_me
+      </p>
+      <h2 style={{ fontSize: "30px", fontWeight: "800", color: "#f7fafc", marginBottom: "6px" }}>
+        About Me
+      </h2>
+      <div style={{ width: "48px", height: "3px", background: "linear-gradient(90deg,#63b3ed,#9f7aea)", borderRadius: "2px", marginBottom: "40px" }} />
+
       {!loading && !error && (
-        <p style={styles.success}>✅ Live data from FastAPI</p>
+        <span style={{
+          display: "inline-flex", alignItems: "center", gap: "7px",
+          fontFamily: "monospace", fontSize: "11px", color: "#68d391",
+          background: "rgba(104,211,145,0.07)",
+          border: "1px solid rgba(104,211,145,0.2)",
+          padding: "4px 12px", borderRadius: "20px", marginBottom: "32px",
+        }}>
+          <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#68d391", display: "inline-block" }} />
+          live · FastAPI
+        </span>
       )}
 
-      <p style={styles.name}>{data.name}</p>
-      <p style={styles.title}>{data.title}</p>
-      <p style={styles.location}>📍 {data.location}</p>
-      <p style={styles.bio}>{data.bio}</p>
+      <div style={{ display: "grid", gridTemplateColumns: "180px 1fr", gap: "48px", alignItems: "start" }}>
 
-      <div style={styles.links}>
-        <a href={`mailto:${data.email}`} style={styles.link}>
-          ✉️ {data.email}
-        </a>
-        <a href={data.linkedin} target="_blank" rel="noreferrer" style={styles.link}>
-          💼 LinkedIn
-        </a>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "14px" }}>
+          <div style={{
+            width: "150px", height: "150px", borderRadius: "16px",
+            background: "linear-gradient(135deg, #1a2438, #2d3748)",
+            border: "2px solid rgba(99,179,237,0.2)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: "36px", fontWeight: "900", color: "#63b3ed", fontFamily: "monospace",
+          }}>
+            UM
+          </div>
+          <div style={{
+            fontSize: "12px", padding: "5px 14px", borderRadius: "20px",
+            background: "rgba(104,211,145,0.08)", border: "1px solid rgba(104,211,145,0.25)",
+            color: "#68d391", textAlign: "center", fontWeight: "600",
+          }}>
+            {data.available ? "Open to work" : "Not available"}
+          </div>
+        </div>
+
+        <div>
+          <h3 style={{ fontSize: "26px", fontWeight: "700", color: "#f7fafc", marginBottom: "4px" }}>
+            {data.name}
+          </h3>
+          <p style={{ fontSize: "15px", color: "#63b3ed", fontWeight: "600", marginBottom: "4px" }}>
+            {data.title}
+          </p>
+          <p style={{ fontSize: "13px", color: "#a0aec0", marginBottom: "20px" }}>
+            Germany
+          </p>
+          <p style={{
+            fontSize: "15px", color: "#a0aec0", lineHeight: "1.9", marginBottom: "24px",
+            borderLeft: "2px solid rgba(99,179,237,0.3)", paddingLeft: "16px",
+          }}>
+            {data.bio}
+          </p>
+          <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+            <a href={"mailto:" + data.email} style={{
+              padding: "8px 18px", borderRadius: "8px",
+              border: "1px solid rgba(99,179,237,0.2)",
+              color: "#63b3ed", fontSize: "13px", fontWeight: "500",
+            }}>
+              Send Email
+            </a>
+            <a href={data.linkedin} target="_blank" rel="noreferrer" style={{
+              padding: "8px 18px", borderRadius: "8px",
+              background: "rgba(99,179,237,0.08)",
+              border: "1px solid rgba(99,179,237,0.2)",
+              color: "#63b3ed", fontSize: "13px", fontWeight: "500",
+            }}>
+              LinkedIn
+            </a>
+          </div>
+        </div>
+
       </div>
-
-      {data.available && (
-        <div style={styles.badge}>🟢 Open to opportunities</div>
-      )}
-    </div>
-  );
+    </section>
+  ); 
 }
-
-const styles = {
-  container: {
-    maxWidth: "650px", margin: "40px auto", padding: "28px",
-    border: "1px solid #ddd", borderRadius: "12px",
-    fontFamily: "Arial", boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
-    background: "white"
-  },
-  heading:  { color: "#4f8ef7", borderBottom: "2px solid #4f8ef7", paddingBottom: "8px", marginBottom: "16px" },
-  status:   { color: "#888", fontSize: "13px" },
-  success:  { color: "#2e7d32", fontSize: "13px", background: "#e8f5e9", padding: "6px 12px", borderRadius: "6px", display: "inline-block", marginBottom: "16px" },
-  error:    { color: "#c62828", fontSize: "13px", background: "#ffebee", padding: "6px 12px", borderRadius: "6px", marginBottom: "16px" },
-  name:     { fontSize: "26px", fontWeight: "bold", margin: "8px 0 4px" },
-  title:    { fontSize: "16px", color: "#555", margin: "4px 0" },
-  location: { fontSize: "14px", color: "#888", margin: "4px 0 16px" },
-  bio:      { lineHeight: "1.8", color: "#333", marginBottom: "20px" },
-  links:    { display: "flex", gap: "20px", marginBottom: "16px", flexWrap: "wrap" },
-  link:     { color: "#4f8ef7", textDecoration: "none", fontSize: "14px" },
-  badge:    { display: "inline-block", background: "#e8f5e9", color: "#2e7d32", padding: "6px 16px", borderRadius: "20px", fontSize: "14px" },
-};
 
 export default AboutMe;

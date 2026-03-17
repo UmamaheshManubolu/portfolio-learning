@@ -7,10 +7,25 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 from openai import OpenAI
 
+import aiosmtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import os
+
 load_dotenv() # Load environment variables from .env file
 client = OpenAI()
 
 app = FastAPI(title="Umamahesh Portfolio API")
+
+# ======================================================
+# Email sending function
+# ======================================================
+
+async def send_email(name: str, email: str, subject: str, message: str):
+    """Send email notification for contact form submissions"""
+    # TODO: Implement email sending logic using OpenAI or email service
+    # For now, just log it
+    pass
 
 # CORS - allows React (localhost:5173) to talk to this server
 app.add_middleware(
@@ -94,15 +109,84 @@ def get_experience():
         }
     ]
 
+
+# ── Email helper ──────────────────────────────────────────
+async def send_email(name: str, email: str, subject: str, message: str):
+    username = os.getenv("EMAIL_USERNAME", "")
+    password = os.getenv("EMAIL_PASSWORD", "")
+    to_email = os.getenv("EMAIL_TO", username)
+
+    if not username or not password:
+        print("Email not configured — skipping")
+        return
+
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = f"[Portfolio] {subject}"
+    msg["From"]    = username
+    msg["To"]      = to_email
+    msg["Reply-To"] = email
+
+    html = f"""
+    <div style="font-family:Arial,sans-serif;max-width:600px;
+                padding:32px;background:#f9f9f9;border-radius:12px">
+      <h2 style="color:#4f8ef7;margin-top:0">
+        New Portfolio Message
+      </h2>
+      <table style="width:100%;border-collapse:collapse">
+        <tr>
+          <td style="padding:8px 0;color:#666;width:80px">Name:</td>
+          <td style="padding:8px 0;font-weight:bold">{name}</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 0;color:#666">Email:</td>
+          <td style="padding:8px 0">
+            <a href="mailto:{email}" style="color:#4f8ef7">{email}</a>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:8px 0;color:#666">Subject:</td>
+          <td style="padding:8px 0">{subject}</td>
+        </tr>
+      </table>
+      <div style="margin-top:20px;padding:20px;background:#fff;
+                  border-radius:8px;border-left:4px solid #4f8ef7">
+        <p style="margin:0;color:#333;white-space:pre-wrap">{message}</p>
+      </div>
+      <p style="margin-top:24px;color:#999;font-size:12px">
+        Sent from your portfolio contact form
+      </p>
+    </div>
+    """
+
+    msg.attach(MIMEText(html, "html"))
+
+    await aiosmtplib.send(
+        msg,
+        hostname="smtp.gmail.com",
+        port=587,
+        username=username,
+        password=password,
+        start_tls=True,
+    )
+    print(f"Email sent successfully to {to_email}")
+
+
+
+
 # Route 4 — Contact form
 # React contact form calls: POST http://localhost:8000/api/contact
 @app.post("/api/contact", response_model=ContactResponse)
 async def contact(body: ContactRequest):
-    print("\n New contact form submission!")
-    print(f"   From:    {body.name} <{body.email}>")
+    print(f"\n New message from {body.name} <{body.email}>")
     print(f"   Subject: {body.subject}")
     print(f"   Message: {body.message}")
     print("-" * 40)
+
+    # Send email
+    try:
+        await send_email(body.name, body.email, body.subject, body.message)
+    except Exception as e:
+        print(f"Email error: {e}")
 
     return ContactResponse(
         success=True,
@@ -143,5 +227,60 @@ def get_skills():
             "category": "Backend & Tools",
             "icon": "⚙️",
             "items": ["FastAPI", "Docker", "Git", "Linux", "REST APIs", "PostgreSQL"]
+        }
+    ]
+
+@app.get("/api/projects")
+def get_projects():
+    return [
+        {
+            "id": 1,
+            "title": "Multimodal Transformer for Scene Understanding",
+            "description": "Designed and trained a transformer-based architecture for multimodal scene perception, fusing camera and LiDAR inputs for robotic navigation.",
+            "tech": ["PyTorch", "Transformers", "ROS2", "Python", "CUDA"],
+            "github": "https://github.com/umamahesh",
+            "live": None,
+            "category": "AI Research",
+            "featured": True
+        },
+        {
+            "id": 2,
+            "title": "Real-Time Object Detection for Robotics",
+            "description": "Lightweight YOLO-based detection pipeline optimized for embedded robotic platforms, achieving 30+ FPS on edge hardware.",
+            "tech": ["Python", "YOLO", "OpenCV", "ROS", "C++"],
+            "github": "https://github.com/umamahesh",
+            "live": None,
+            "category": "Computer Vision",
+            "featured": True
+        },
+        {
+            "id": 3,
+            "title": "3D Point Cloud Segmentation",
+            "description": "Deep learning pipeline for semantic segmentation of 3D LiDAR point clouds applied to autonomous driving datasets.",
+            "tech": ["Python", "PyTorch", "Open3D", "NumPy", "CUDA"],
+            "github": "https://github.com/umamahesh",
+            "live": None,
+            "category": "Computer Vision",
+            "featured": False
+        },
+        {
+            "id": 4,
+            "title": "Cognitive Robotics Perception System",
+            "description": "Cognitive perception pipeline combining semantic segmentation, depth estimation, and spatial reasoning for robot decision-making.",
+            "tech": ["Python", "C++", "ROS2", "TensorFlow", "PointCloud"],
+            "github": "https://github.com/umamahesh",
+            "live": None,
+            "category": "Robotics",
+            "featured": True
+        },
+        {
+            "id": 5,
+            "title": "FastAPI ML Inference Service",
+            "description": "Production-ready REST API for serving PyTorch and ONNX models with async inference endpoints and Docker deployment.",
+            "tech": ["FastAPI", "Python", "Docker", "ONNX", "PyTorch"],
+            "github": "https://github.com/umamahesh",
+            "live": None,
+            "category": "Backend",
+            "featured": False
         }
     ]

@@ -2,93 +2,115 @@
 // Fetches experience data from FastAPI
 // Falls back to static data if backend is offline
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import staticData from "../data/experience.js";
 
 function Experience() {
-  const [data, setData] = useState(staticData);
+  const [data, setData]       = useState(staticData);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError]     = useState(false);
 
   useEffect(() => {
-    console.log("📡 Fetching Experience from FastAPI...");
-
-    axios
-      .get("http://localhost:8000/api/experience")
-      .then((response) => {
-        console.log("✅ Got experience data:", response.data);
-        setData(response.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log("❌ Error:", err.message);
-        setError("Backend offline — showing static data");
-        setLoading(false);
-      });
+    axios.get("http://localhost:8000/api/experience")
+      .then((res) => { setData(res.data); setLoading(false); })
+      .catch(() => { setError(true); setLoading(false); });
   }, []);
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.heading}>Work Experience</h2>
+    <section id="experience" style={{ background: "#0d1321", padding: "80px 32px" }}>
+      <div style={{ maxWidth: "900px", margin: "0 auto" }}>
 
-      {loading && <p style={styles.status}>⏳ Loading from FastAPI...</p>}
-      {error   && <p style={styles.error}>⚠️ {error}</p>}
-      {!loading && !error && (
-        <p style={styles.success}>✅ Live data from FastAPI</p>
-      )}
+        <p style={{ fontFamily: "monospace", color: "#63b3ed", fontSize: "13px", marginBottom: "6px" }}>
+          // work_history
+        </p>
+        <h2 style={{ fontSize: "30px", fontWeight: "800", color: "#f7fafc", marginBottom: "6px" }}>
+          Work Experience
+        </h2>
+        <div style={{ width: "48px", height: "3px", background: "linear-gradient(90deg,#63b3ed,#9f7aea)", borderRadius: "2px", marginBottom: "40px" }} />
 
-      {data.map((job) => (
-        <div key={job.id} style={styles.card}>
+        {!loading && !error && (
+          <span style={{
+            display: "inline-flex", alignItems: "center", gap: "7px",
+            fontFamily: "monospace", fontSize: "11px", color: "#68d391",
+            background: "rgba(104,211,145,0.07)", border: "1px solid rgba(104,211,145,0.2)",
+            padding: "4px 12px", borderRadius: "20px", marginBottom: "32px",
+          }}>
+            <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#68d391", display: "inline-block" }} />
+            live · FastAPI
+          </span>
+        )}
 
-          {/* Top row — role and type badge */}
-          <div style={styles.topRow}>
-            <span style={styles.role}>{job.role}</span>
-            <span style={styles.typeBadge}>{job.type}</span>
+        {data.map((job, i) => (
+          <div key={job.id} style={{ display: "flex", gap: "20px", marginBottom: "8px" }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingTop: "4px" }}>
+              <div style={{
+                width: "13px", height: "13px", borderRadius: "50%", flexShrink: 0,
+                background: "#63b3ed", boxShadow: "0 0 14px rgba(99,179,237,0.6)",
+                border: "3px solid #0b0f1a",
+              }} />
+              {i < data.length - 1 && (
+                <div style={{ width: "2px", flex: 1, background: "rgba(99,179,237,0.12)", margin: "8px 0", minHeight: "50px" }} />
+              )}
+            </div>
+
+            <div
+              style={{
+                flex: 1, background: "#111827",
+                border: "1px solid rgba(99,179,237,0.1)",
+                borderRadius: "14px", padding: "24px", marginBottom: "20px",
+                transition: "border-color 0.25s",
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(99,179,237,0.4)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(99,179,237,0.1)"; }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "12px", marginBottom: "14px" }}>
+                <div>
+                  <h3 style={{ fontSize: "17px", fontWeight: "700", color: "#f7fafc", marginBottom: "4px" }}>
+                    {job.role}
+                  </h3>
+                  <p style={{ fontSize: "13px", color: "#63b3ed", fontWeight: "500" }}>
+                    {job.company} · {job.location}
+                  </p>
+                </div>
+                <div style={{ textAlign: "right", display: "flex", flexDirection: "column", gap: "6px" }}>
+                  <span style={{ fontFamily: "monospace", fontSize: "12px", color: "#a0aec0" }}>
+                    {job.period}
+                  </span>
+                  <span style={{
+                    fontSize: "11px", background: "rgba(159,122,234,0.1)", color: "#9f7aea",
+                    padding: "3px 10px", borderRadius: "20px", border: "1px solid rgba(159,122,234,0.2)",
+                  }}>
+                    {job.type}
+                  </span>
+                </div>
+              </div>
+
+              <ul style={{ listStyle: "none", padding: 0, marginBottom: "16px" }}>
+                {job.highlights.map((point, idx) => (
+                  <li key={idx} style={{ fontSize: "14px", color: "#a0aec0", lineHeight: "1.8", marginBottom: "4px", paddingLeft: "18px", position: "relative" }}>
+                    <span style={{ position: "absolute", left: 0, color: "#63b3ed" }}>▸</span>
+                    {point}
+                  </li>
+                ))}
+              </ul>
+
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                {job.tech.map((t) => (
+                  <span key={t} style={{
+                    padding: "3px 12px", borderRadius: "20px", fontSize: "12px", fontFamily: "monospace",
+                    background: "rgba(99,179,237,0.08)", color: "#63b3ed", border: "1px solid rgba(99,179,237,0.15)",
+                  }}>
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
-
-          {/* Company and period */}
-          <p style={styles.company}>{job.company} · {job.location}</p>
-          <p style={styles.period}>📅 {job.period}</p>
-
-          {/* Bullet points */}
-          <ul style={styles.list}>
-            {job.highlights.map((point, index) => (
-              <li key={index} style={styles.listItem}>
-                {point}
-              </li>
-            ))}
-          </ul>
-
-          {/* Tech tags */}
-          <div style={styles.tags}>
-            {job.tech.map((t) => (
-              <span key={t} style={styles.tag}>{t}</span>
-            ))}
-          </div>
-
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    </section>
   );
 }
-
-const styles = {
-  container:  { maxWidth: "650px", margin: "40px auto", padding: "0 20px", fontFamily: "Arial" },
-  heading:    { color: "#4f8ef7", borderBottom: "2px solid #4f8ef7", paddingBottom: "8px", marginBottom: "16px" },
-  status:     { color: "#888", fontSize: "13px", marginBottom: "12px" },
-  success:    { color: "#2e7d32", fontSize: "13px", background: "#e8f5e9", padding: "6px 12px", borderRadius: "6px", display: "inline-block", marginBottom: "16px" },
-  error:      { color: "#c62828", fontSize: "13px", background: "#ffebee", padding: "6px 12px", borderRadius: "6px", marginBottom: "16px" },
-  card:       { background: "white", border: "1px solid #e0e0e0", borderRadius: "10px", padding: "20px", marginBottom: "16px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" },
-  topRow:     { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" },
-  role:       { fontSize: "18px", fontWeight: "bold", color: "#222" },
-  typeBadge:  { fontSize: "11px", background: "#e3f2fd", color: "#1565c0", padding: "3px 10px", borderRadius: "10px" },
-  company:    { color: "#4f8ef7", fontSize: "14px", fontWeight: "600", margin: "4px 0 2px" },
-  period:     { color: "#888", fontSize: "13px", marginBottom: "14px" },
-  list:       { paddingLeft: "18px", marginBottom: "14px" },
-  listItem:   { color: "#444", fontSize: "14px", lineHeight: "1.8", marginBottom: "2px" },
-  tags:       { display: "flex", flexWrap: "wrap", gap: "6px" },
-  tag:        { background: "#ede7f6", color: "#512da8", padding: "3px 10px", borderRadius: "4px", fontSize: "12px" },
-};
 
 export default Experience;

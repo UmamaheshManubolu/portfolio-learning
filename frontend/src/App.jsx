@@ -34,20 +34,34 @@
 
 // export default App
 
-//src/App.jsx 
+//src/App.jsx
+import React from "react";
+import Navbar from "./components/Navbar.jsx";
+import Hero from "./components/Hero.jsx";
 import AboutMe from "./components/AboutMe.jsx";
 import Experience from "./components/Experience.jsx";    // ← ADD
 import Skills from "./components/Skills.jsx";          // ← ADD
+import Projects from "./components/projects.jsx";      // ← ADD
+import Contact from "./components/contact.jsx";
 
 function App() {
   return (
-    <div style={{ background: "#f8f9fa", minHeight: "100vh", padding: "20px" }}>
-      <h1 style={{ textAlign: "center", color: "#333", marginBottom: "8px" }}>
+    <div style={{ background: "#0b0f1a", minHeight: "100vh" }}>
+
+      <Navbar />
+      <Hero />
+
+      <div style={{ textAlign: "center", padding: "60px 24px 0" }}>
+        <h1 style={{
+          fontSize: "36px", fontWeight: "800",
+          color: "#f7fafc", marginBottom: "8px",
+        }}>
         Umamahesh Manubolu
       </h1>
-      <p style={{ textAlign: "center", color: "#888", marginBottom: "40px" }}>
-        AI Research Engineer · Germany
-      </p>
+      <p style={{ color: "#63b3ed", fontSize: "15px", fontWeight: "500" }}>
+          AI Research Engineer · Germany
+        </p>
+      </div>
 
       <AboutMe />
 
@@ -55,6 +69,9 @@ function App() {
 
       <Skills /> {/* ← ADD */}
 
+      <Projects /> {/* ← ADD */}
+
+      <Contact /> {/* ← ADD */}
     </div>
   );
 }
