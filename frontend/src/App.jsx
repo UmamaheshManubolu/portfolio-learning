@@ -34,8 +34,9 @@
 
 // export default App
 
-// src/App.jsx
+//src/App.jsx 
 import AboutMe from "./components/AboutMe.jsx";
+import Experience from "./components/Experience.jsx";    // ← ADD
 
 function App() {
   return (
@@ -49,6 +50,8 @@ function App() {
 
       <AboutMe />
 
+      <Experience /> {/* ← ADD */}
+
       {/* More sections go here — one by one */}
 
     </div>
@@ -56,3 +59,4 @@ function App() {
 }
 
 export default App;
+
