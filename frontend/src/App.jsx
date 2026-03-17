@@ -37,6 +37,7 @@
 //src/App.jsx 
 import AboutMe from "./components/AboutMe.jsx";
 import Experience from "./components/Experience.jsx";    // ← ADD
+import Skills from "./components/Skills.jsx";          // ← ADD
 
 function App() {
   return (
@@ -52,7 +53,7 @@ function App() {
 
       <Experience /> {/* ← ADD */}
 
-      {/* More sections go here — one by one */}
+      <Skills /> {/* ← ADD */}
 
     </div>
   );
