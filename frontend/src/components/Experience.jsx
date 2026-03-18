@@ -12,7 +12,7 @@ function Experience() {
   const [error, setError]     = useState(false);
 
   useEffect(() => {
-    axios.get("http://localhost:8000/api/experience")
+    axios.get(`${import.meta.env.VITE_API_URL}/api/experience`)
       .then((res) => { setData(res.data); setLoading(false); })
       .catch(() => { setError(true); setLoading(false); });
   }, []);

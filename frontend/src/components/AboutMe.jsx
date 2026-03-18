@@ -11,7 +11,7 @@ function AboutMe() {
   const [error, setError]     = useState(false);
 
   useEffect(() => {
-    axios.get("http://localhost:8000/api/about")
+    axios.get(`${import.meta.env.VITE_API_URL}/api/about`)
       .then((res) => { setData(res.data); setLoading(false); })
       .catch(() => { setError(true); setLoading(false); });
   }, []);

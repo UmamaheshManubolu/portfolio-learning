@@ -11,7 +11,7 @@ function Projects() {
   const [active, setActive]     = useState("All");
 
   useEffect(() => {
-    axios.get("http://localhost:8000/api/projects")
+    axios.get(`${import.meta.env.VITE_API_URL}/api/projects`)
       .then((res) => { setData(res.data); setLoading(false); })
       .catch(() => { setError(true); setLoading(false); });
   }, []);

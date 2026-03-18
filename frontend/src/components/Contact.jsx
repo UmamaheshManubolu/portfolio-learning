@@ -18,7 +18,7 @@ function Contact() {
     setLoading(true);
     setStatus(null);
     try {
-      await axios.post("http://localhost:8000/api/contact", form);
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/contact`, form);
       setStatus("success");
       setForm({ name: "", email: "", subject: "", message: "" });
     } catch (err) {
