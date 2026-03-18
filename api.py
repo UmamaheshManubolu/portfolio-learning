@@ -30,7 +30,12 @@ async def send_email(name: str, email: str, subject: str, message: str):
 # CORS - allows React (localhost:5173) to talk to this server
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000"], # React dev server
+    allow_origins=[
+        "http://localhost:5173", 
+        "http://localhost:3000",
+        "https://umamahesh-portfolio.vercel.app",  # ← update after Vercel deploy
+        "https://*.vercel.app",
+        ], # React dev server
     allow_methods=["*"],
     allow_headers=["*"],
 )
