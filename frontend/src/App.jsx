@@ -41,8 +41,8 @@ import Hero from "./components/Hero.jsx";
 import AboutMe from "./components/AboutMe.jsx";
 import Experience from "./components/Experience.jsx";    // ← ADD
 import Skills from "./components/Skills.jsx";          // ← ADD
-import Projects from "./components/projects.jsx";      // ← ADD
-import Contact from "./components/contact.jsx";
+import Projects from "./components/Projects.jsx";      // ← ADD
+import Contact from "./components/Contact.jsx";
 
 function App() {
   return (
