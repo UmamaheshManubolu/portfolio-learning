@@ -33,8 +33,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173", 
         "http://localhost:3000",
-        "https://umamahesh-portfolio.vercel.app",  # ← update after Vercel deploy
-        "https://*.vercel.app",
+        "https://portfolio-learning-r49p4ebz4-umamaheshmanubolus-projects.vercel.app/",  # ← updated after Vercel deploy
         ], # React dev server
     allow_methods=["*"],
     allow_headers=["*"],
