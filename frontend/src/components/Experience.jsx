@@ -13,7 +13,11 @@ function Experience() {
 
   useEffect(() => {
     axios.get(`${import.meta.env.VITE_API_URL}/api/experience`)
-      .then((res) => { setData(res.data); setLoading(false); })
+      .then((res) => {
+        const result = Array.isArray(res.data) ? res.data : staticData;
+        setData(result);
+        setLoading(false);
+      })
       .catch(() => { setError(true); setLoading(false); });
   }, []);
 

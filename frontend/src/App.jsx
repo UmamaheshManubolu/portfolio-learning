@@ -43,6 +43,7 @@ import Experience from "./components/Experience.jsx";    // ← ADD
 import Skills from "./components/Skills.jsx";          // ← ADD
 import Projects from "./components/Projects.jsx";      // ← ADD
 import Contact from "./components/Contact.jsx";
+import ChatBot from "./components/ChatBot.jsx";   // ← ADD
 
 function App() {
   return (
@@ -72,6 +73,8 @@ function App() {
       <Projects /> {/* ← ADD */}
 
       <Contact /> {/* ← ADD */}
+
+      <ChatBot /> {/* ← ADD */}
     </div>
   );
 }
