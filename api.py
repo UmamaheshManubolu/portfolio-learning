@@ -62,6 +62,10 @@ def root():
         "message": "Umamahesh Portfolio API is live"
     }
 
+@app.get("/health")
+def health():
+    return {"status": "healthy"}
+
 # Route 2 — About Me data
 # React About Me section calls: GET http://localhost:8000/api/about
 @app.get("/api/about")
